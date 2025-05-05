@@ -339,6 +339,238 @@ export type PRODUCT_QUERYResult = Array<{
     _key: string;
   }>;
 }>;
+// Variable: SHORT_SLEEVE_QUERY
+// Query: *[_type == "product" && category->slug.current == "short-sleeve"] | order(_createdAt desc)
+export type SHORT_SLEEVE_QUERYResult = Array<{
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
+  category?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "category";
+  };
+  price?: number;
+  images?: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  variants?: Array<{
+    variantId?: string;
+    size?: string;
+    color?: {
+      name?: string;
+      value?: string;
+    };
+    stock?: number;
+    price?: number;
+    _type: "variant";
+    _key: string;
+  }>;
+  featured?: boolean;
+  bestSeller?: boolean;
+  newArrival?: boolean;
+  rating?: number;
+  reviews?: Array<{
+    user?: {
+      name?: string;
+    };
+    rating?: number;
+    comment?: string;
+    date?: string;
+    _type: "review";
+    _key: string;
+  }>;
+}>;
+// Variable: LONG_SLEEVE_QUERY
+// Query: *[_type == "product" && category->slug.current == "long-sleeve"] | order(_createdAt desc)
+export type LONG_SLEEVE_QUERYResult = Array<{
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
+  category?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "category";
+  };
+  price?: number;
+  images?: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  variants?: Array<{
+    variantId?: string;
+    size?: string;
+    color?: {
+      name?: string;
+      value?: string;
+    };
+    stock?: number;
+    price?: number;
+    _type: "variant";
+    _key: string;
+  }>;
+  featured?: boolean;
+  bestSeller?: boolean;
+  newArrival?: boolean;
+  rating?: number;
+  reviews?: Array<{
+    user?: {
+      name?: string;
+    };
+    rating?: number;
+    comment?: string;
+    date?: string;
+    _type: "review";
+    _key: string;
+  }>;
+}>;
+// Variable: PARTY_QUERY
+// Query: *[_type == "product" && category->slug.current == "party"] | order(_createdAt desc)
+export type PARTY_QUERYResult = Array<{
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
+  category?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "category";
+  };
+  price?: number;
+  images?: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  variants?: Array<{
+    variantId?: string;
+    size?: string;
+    color?: {
+      name?: string;
+      value?: string;
+    };
+    stock?: number;
+    price?: number;
+    _type: "variant";
+    _key: string;
+  }>;
+  featured?: boolean;
+  bestSeller?: boolean;
+  newArrival?: boolean;
+  rating?: number;
+  reviews?: Array<{
+    user?: {
+      name?: string;
+    };
+    rating?: number;
+    comment?: string;
+    date?: string;
+    _type: "review";
+    _key: string;
+  }>;
+}>;
+// Variable: TRADITIONAL_QUERY
+// Query: *[_type == "product" && category->slug.current == "traditional"] | order(_createdAt desc)
+export type TRADITIONAL_QUERYResult = Array<{
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
+  category?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "category";
+  };
+  price?: number;
+  images?: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  variants?: Array<{
+    variantId?: string;
+    size?: string;
+    color?: {
+      name?: string;
+      value?: string;
+    };
+    stock?: number;
+    price?: number;
+    _type: "variant";
+    _key: string;
+  }>;
+  featured?: boolean;
+  bestSeller?: boolean;
+  newArrival?: boolean;
+  rating?: number;
+  reviews?: Array<{
+    user?: {
+      name?: string;
+    };
+    rating?: number;
+    comment?: string;
+    date?: string;
+    _type: "review";
+    _key: string;
+  }>;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
@@ -347,5 +579,9 @@ declare module "@sanity/client" {
     "*[_type == \"heroSection\"] | order(name asc)": HERO_QUERYResult;
     "*[_type == \"category\"] | order(name asc)": CATEGORY_QUERYResult;
     "*[_type == \"product\"] | order(_createdAt desc)": PRODUCT_QUERYResult;
+    "*[_type == \"product\" && category->slug.current == \"short-sleeve\"] | order(_createdAt desc)": SHORT_SLEEVE_QUERYResult;
+    "*[_type == \"product\" && category->slug.current == \"long-sleeve\"] | order(_createdAt desc)": LONG_SLEEVE_QUERYResult;
+    "*[_type == \"product\" && category->slug.current == \"party\"] | order(_createdAt desc)": PARTY_QUERYResult;
+    "*[_type == \"product\" && category->slug.current == \"traditional\"] | order(_createdAt desc)": TRADITIONAL_QUERYResult;
   }
 }
