@@ -108,27 +108,3 @@ export const getProductSlug = async (slug: string) => {
     return null;
   }
 };
-
-// sanity/helpers/index.ts
-
-import { client } from "@/sanity/lib/client";
-import { Product } from "../../../sanity.types";
-
-export async function getSimilarProducts(
-  productId: string,
-  category: string
-): Promise<Product[]> {
-  const query = `
-    *[_type == "product" && category == $category && _id != $productId] {
-      _id,
-      name,
-      price,
-      category,
-      images
-    }[0..3]
-  `;
-
-  const params = { category, productId };
-  const similarProducts = await client.fetch(query, params);
-  return similarProducts;
-}

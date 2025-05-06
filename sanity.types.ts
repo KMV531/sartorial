@@ -571,6 +571,64 @@ export type TRADITIONAL_QUERYResult = Array<{
     _key: string;
   }>;
 }>;
+// Variable: PRODUCT_BY_SLUG
+// Query: *[_type == "product" && slug.current == $slug] | order(name asc)[0]
+export type PRODUCT_BY_SLUGResult = {
+  _id: string;
+  _type: "product";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  description?: string;
+  category?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "category";
+  };
+  price?: number;
+  images?: Array<{
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+    _key: string;
+  }>;
+  variants?: Array<{
+    variantId?: string;
+    size?: string;
+    color?: {
+      name?: string;
+      value?: string;
+    };
+    stock?: number;
+    price?: number;
+    _type: "variant";
+    _key: string;
+  }>;
+  featured?: boolean;
+  bestSeller?: boolean;
+  newArrival?: boolean;
+  rating?: number;
+  reviews?: Array<{
+    user?: {
+      name?: string;
+    };
+    rating?: number;
+    comment?: string;
+    date?: string;
+    _type: "review";
+    _key: string;
+  }>;
+} | null;
 
 // Query TypeMap
 import "@sanity/client";
@@ -583,5 +641,6 @@ declare module "@sanity/client" {
     "*[_type == \"product\" && category->slug.current == \"long-sleeve\"] | order(_createdAt desc)": LONG_SLEEVE_QUERYResult;
     "*[_type == \"product\" && category->slug.current == \"party\"] | order(_createdAt desc)": PARTY_QUERYResult;
     "*[_type == \"product\" && category->slug.current == \"traditional\"] | order(_createdAt desc)": TRADITIONAL_QUERYResult;
+    "*[_type == \"product\" && slug.current == $slug] | order(name asc)[0]": PRODUCT_BY_SLUGResult;
   }
 }
