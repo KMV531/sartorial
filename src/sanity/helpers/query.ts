@@ -27,3 +27,7 @@ export const PARTY_QUERY = defineQuery(
 export const TRADITIONAL_QUERY = defineQuery(
   `*[_type == "product" && category->slug.current == "traditional"] | order(_createdAt desc)`
 );
+
+export const PRODUCT_BY_SLUG = defineQuery(
+  `*[_type == "product" && slug.current == $slug] | order(name asc)[0]`
+);
