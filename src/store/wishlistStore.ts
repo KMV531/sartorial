@@ -1,9 +1,11 @@
+// wishlistStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Product } from "../../sanity.types";
 
 interface WishlistState {
   items: Product[];
+  count: number;
   addItem: (product: Product) => void;
   removeItem: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
@@ -14,18 +16,26 @@ export const useWishlistStore = create<WishlistState>()(
   persist(
     (set, get) => ({
       items: [],
+      count: 0,
 
       addItem: (product) => {
         const currentItems = get().items;
-        if (currentItems.some((item) => item._id === product._id)) return;
-
-        set({ items: [...currentItems, product] });
+        if (!currentItems.some((item) => item._id === product._id)) {
+          set({
+            items: [...currentItems, product],
+            count: currentItems.length + 1,
+          });
+        }
       },
 
       removeItem: (productId) => {
-        set((state) => ({
-          items: state.items.filter((item) => item._id !== productId),
-        }));
+        const currentItems = get().items.filter(
+          (item) => item._id !== productId
+        );
+        set({
+          items: currentItems,
+          count: currentItems.length,
+        });
       },
 
       isInWishlist: (productId) => {
@@ -33,7 +43,7 @@ export const useWishlistStore = create<WishlistState>()(
       },
 
       clearWishlist: () => {
-        set({ items: [] });
+        set({ items: [], count: 0 });
       },
     }),
     {

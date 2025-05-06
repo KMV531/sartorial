@@ -8,6 +8,7 @@ import { PRODUCT_QUERYResult } from "../../sanity.types";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
+import { toast } from "sonner"; // Ensure this is imported
 
 interface ProductCardProps {
   product: PRODUCT_QUERYResult[0];
@@ -23,8 +24,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     if (inWishlist) {
       removeItem(product._id);
+      // Show toast when removed from wishlist
+      toast(`${product.name} removed from wishlist`, {
+        description: "You can add it back anytime.",
+        style: {
+          backgroundColor: "red", // Red background for removal
+          color: "white",
+          padding: "10px",
+        },
+      });
     } else {
       addItem(product);
+      // Show toast when added to wishlist
+      toast(`${product.name} added to wishlist`, {
+        description: "You'll be able to find it here later.",
+        style: {
+          backgroundColor: "green", // Green background for adding
+          color: "white",
+          padding: "10px",
+        },
+      });
     }
   };
 
@@ -61,7 +80,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <Button
             size="icon"
             variant="secondary"
-            className={`absolute top-2 right-2 rounded-full opacity-70 hover:opacity-100 ${
+            className={`absolute top-2 right-2 rounded-full opacity-70 hover:opacity-100 cursor-pointer ${
               inWishlist
                 ? "bg-brand-100 text-red-500"
                 : "bg-white text-brand-700"

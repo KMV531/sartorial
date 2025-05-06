@@ -103,7 +103,7 @@ const CategoryPage: React.FC<Props> = ({ products }) => {
     if (filters.colors.length > 0) {
       filtered = filtered.filter((p) => {
         const productColorValues = new Set(
-          p.variants?.map((v) => v.color?.value)
+          p.variants?.map((v) => v.color?.value?.toLowerCase()) // 🔥 this is the key fix
         );
         return filters.colors.some((color) => productColorValues.has(color));
       });
