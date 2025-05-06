@@ -1,7 +1,7 @@
 import { getProductSlug } from "@/sanity/helpers";
-import SingleProductPageDetail from "@/components/SingleProductPageDetail";
 import { notFound } from "next/navigation";
 import { client } from "@/sanity/lib/client";
+import SingleProductDetailPage from "@/components/SingleProductDetailPage";
 
 // Since this is a Next.js app directory function, it needs to be async
 export default async function ProductPage({
@@ -27,6 +27,6 @@ export default async function ProductPage({
 
   // Render the SingleProductPageDetail component with the fetched data
   return (
-    <SingleProductPageDetail Product={Product} category={categoryWithDetails} />
+    <SingleProductDetailPage Product={Product} category={categoryWithDetails} />
   );
 }

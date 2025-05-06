@@ -35,7 +35,7 @@ type Color = {
   value: string; // Allow undefined for 'value'
 } | null; // Allow null as a fallback
 
-const ProductDetail = ({ Product, category }: SingleProductProps) => {
+const SingleProductDetailPage = ({ Product, category }: SingleProductProps) => {
   const router = useRouter();
 
   // Check if product is available
@@ -64,10 +64,16 @@ const ProductDetail = ({ Product, category }: SingleProductProps) => {
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
       const firstVariant = product.variants[0];
+      if (firstVariant.color?.name && firstVariant.color?.value) {
+        setSelectedColor({
+          name: firstVariant.color.name,
+          value: firstVariant.color.value,
+        });
+      } else {
+        setSelectedColor(null); // fallback if invalid
+      }
 
-      // Safely set color and size, considering possible undefined or null values
-      setSelectedColor(firstVariant.color ?? null); // Use null as a fallback
-      setSelectedSize(firstVariant.size ?? null); // Use null as a fallback
+      setSelectedSize(firstVariant.size ?? null);
     }
   }, [product]);
 
@@ -221,6 +227,7 @@ const ProductDetail = ({ Product, category }: SingleProductProps) => {
                   <Image
                     width={600}
                     height={600}
+                    priority
                     src={urlFor(product.images?.[selectedImage]).url()}
                     alt={`${product?.name}`}
                     className="w-full h-full object-cover object-center"
@@ -520,4 +527,4 @@ const ProductDetail = ({ Product, category }: SingleProductProps) => {
   );
 };
 
-export default ProductDetail;
+export default SingleProductDetailPage;

@@ -6,6 +6,7 @@ import { Menu, Search, ShoppingCart, Heart, X } from "lucide-react";
 import Link from "next/link";
 import UserAuthSection from "./UserAuthSection";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { useCartStore } from "@/store/cartStore";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,6 +17,9 @@ const Header = () => {
 
   // Subscribe to the wishlist items count
   const wishlistCount = useWishlistStore((state) => state.count);
+
+  // Subscribe to the cart items count
+  const cartCount = useCartStore((state) => state.getItemCount());
 
   const categories = [
     { name: "Short Sleeve", path: "/category/short-sleeve" },
@@ -93,7 +97,7 @@ const Header = () => {
               >
                 <ShoppingCart size={20} />
                 <span className="absolute -top-1 -right-1 bg-brand-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {0}
+                  {cartCount}
                 </span>
               </Button>
             </Link>

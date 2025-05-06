@@ -30,7 +30,8 @@ interface CartState {
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
-  getTotalItems: () => number;
+  getTotalItems: () => number; // Total quantity
+  getItemCount: () => number; // Unique item count
 }
 
 export const useCartStore = create<CartState>()(
@@ -46,10 +47,12 @@ export const useCartStore = create<CartState>()(
         );
 
         if (existingItemIndex > -1) {
+          // Item already exists, only increase quantity
           const updatedItems = [...currentItems];
           updatedItems[existingItemIndex].quantity += 1;
           set({ items: updatedItems });
         } else {
+          // New item, add to cart
           const newItem: CartItem = {
             productId: product._id,
             variantId,
@@ -94,6 +97,10 @@ export const useCartStore = create<CartState>()(
 
       getTotalItems: () => {
         return get().items.reduce((total, item) => total + item.quantity, 0);
+      },
+
+      getItemCount: () => {
+        return get().items.length;
       },
     }),
     {
