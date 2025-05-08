@@ -34,9 +34,9 @@ const HeroSection = ({ hero }: { hero: HERO_QUERYResult }) => {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="border-white text-black hover:bg-white/10"
+                  className="border-white text-black hover:bg-white/10 hover:text-white"
                 >
-                  <Link href="/new-arrivals">New Arrivals</Link>
+                  <Link href="/about">About Us</Link>
                 </Button>
               </div>
             </div>

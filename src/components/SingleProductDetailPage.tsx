@@ -49,9 +49,13 @@ const SingleProductDetailPage = ({ Product, category }: SingleProductProps) => {
   const productUrl = `${process.env.NEXT_PUBLIC_URL}/product/${Product?.slug?.current}`;
   const productTitle = Product.name;
   const productDescription = Product.description;
-  const productImage = Product.images?.[0]?.asset
-    ? urlFor(Product.images[0].asset).width(600).height(600).url()
-    : "/assets/placeholder_image.svg";
+  const productImage = product.images?.[0]?.asset
+    ? urlFor(product.images[0].asset)
+        .width(1200)
+        .height(630)
+        .format("webp") // Ensure extension and compatibility
+        .url()
+    : `${process.env.NEXT_PUBLIC_URL}/assets/placeholder_image.webp`; // Ensure this also ends in .webp
 
   const { addItem } = useCartStore();
   const {
@@ -173,15 +177,19 @@ const SingleProductDetailPage = ({ Product, category }: SingleProductProps) => {
       <Head>
         <title>{productTitle} - Sartorial</title>
         <meta name="description" content={productDescription} />
+
+        {/* Open Graph tags */}
         <meta property="og:title" content={productTitle} />
         <meta property="og:description" content={productDescription} />
         <meta property="og:image" content={productImage} />
-        <meta property="og:url" content={productUrl} />
+        <meta property="og:image:type" content="image/webp" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:type" content="product" />
-        <meta
-          name="twitter:card"
-          content="Check this amazing and popular product"
-        />
+        <meta property="og:url" content={productUrl} />
+
+        {/* Twitter card tags */}
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={productTitle} />
         <meta name="twitter:description" content={productDescription} />
         <meta name="twitter:image" content={productImage} />

@@ -16,7 +16,7 @@ const BestSeller = async () => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl md:text-3xl font-bold">Best Sellers</h2>
             <Button asChild variant="link" className="text-brand-700">
-              <Link href="/products">See All</Link>
+              <Link href="/category/long-sleeve">See All</Link>
             </Button>
           </div>
 
