@@ -31,3 +31,17 @@ export const TRADITIONAL_QUERY = defineQuery(
 export const PRODUCT_BY_SLUG = defineQuery(
   `*[_type == "product" && slug.current == $slug] | order(name asc)[0]`
 );
+
+export const SIMILAR_PRODUCTS_QUERY = defineQuery(`
+  *[_type == "product" && category._ref == $categoryId && _id != $currentProductId] 
+  | order(_createdAt desc)[0...4] {
+    _id,
+    name,
+    "slug": slug.current,
+    description,
+    price,
+    "images": images[].asset->url,
+    "category": category->name,
+    "categorySlug": category->slug.current,
+  }
+`);

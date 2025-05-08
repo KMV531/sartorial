@@ -1,4 +1,4 @@
-import { getProductSlug } from "@/sanity/helpers";
+import { getProductSlug, getSimilarProducts } from "@/sanity/helpers";
 import { notFound } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import SingleProductDetailPage from "@/components/SingleProductDetailPage";
@@ -25,8 +25,17 @@ export default async function ProductPage({
     { categoryId: Product?.category?._ref }
   );
 
+  const similarProducts = await getSimilarProducts({
+    categoryId: Product.category._ref,
+    currentProductId: Product._id,
+  });
+
   // Render the SingleProductPageDetail component with the fetched data
   return (
-    <SingleProductDetailPage Product={Product} category={categoryWithDetails} />
+    <SingleProductDetailPage
+      Product={Product}
+      category={categoryWithDetails}
+      similarProducts={similarProducts}
+    />
   );
 }

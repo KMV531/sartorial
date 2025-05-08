@@ -22,10 +22,12 @@ import {
   LinkedinIcon,
 } from "react-share";
 import Head from "next/head";
+import ProductGrid from "./ProductGrid";
 
 type SingleProductProps = {
   Product: Product;
   category: Category;
+  similarProducts: Product[];
 };
 
 type Size = string | null; // size can be string or null
@@ -35,7 +37,11 @@ type Color = {
   value: string; // Allow undefined for 'value'
 } | null; // Allow null as a fallback
 
-const SingleProductDetailPage = ({ Product, category }: SingleProductProps) => {
+const SingleProductDetailPage = ({
+  Product,
+  category,
+  similarProducts,
+}: SingleProductProps) => {
   const router = useRouter();
 
   // Check if product is available
@@ -462,11 +468,13 @@ const SingleProductDetailPage = ({ Product, category }: SingleProductProps) => {
                 <h3 className="text-lg font-medium mb-2">Description</h3>
                 <p className="text-gray-700">{product.description}</p>
                 <p className="text-gray-700 mt-4">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                  euismod, nisl nec ultricies lacinia, nisl nisl aliquam nisl,
-                  eget aliquam nisl nisl sit amet nisl. Sed euismod, nisl nec
-                  ultricies lacinia, nisl nisl aliquam nisl, eget aliquam nisl
-                  nisl sit amet nisl.
+                  Crafted with quality and designed for everyday use, this
+                  product blends style, functionality, and comfort. Whether
+                  you&apos;re upgrading your essentials or treating yourself to
+                  something new, it&apos;s built to deliver reliable performance
+                  and timeless appeal. Made to suit a variety of preferences,
+                  it&apos;s a versatile choice for anyone looking to enhance
+                  their lifestyle.
                 </p>
               </div>
               <div>
@@ -525,10 +533,14 @@ const SingleProductDetailPage = ({ Product, category }: SingleProductProps) => {
             </Button>
           </div>
 
-          {/* <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6">You Might Also Like</h2>
-          <ProductGrid products={similarProducts} />
-        </div> */}
+          <div className="mt-16">
+            <h2 className="text-2xl font-bold mb-6">You Might Also Like</h2>
+            {similarProducts && similarProducts.length > 0 ? (
+              <ProductGrid products={similarProducts} />
+            ) : (
+              <p className="text-gray-600">No similar products found.</p>
+            )}
+          </div>
         </div>
       </Layout>
     </>

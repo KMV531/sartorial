@@ -7,6 +7,7 @@ import {
   PRODUCT_BY_SLUG,
   PRODUCT_QUERY,
   SHORT_SLEEVE_QUERY,
+  SIMILAR_PRODUCTS_QUERY,
   TRADITIONAL_QUERY,
 } from "./query";
 
@@ -106,5 +107,25 @@ export const getProductSlug = async (slug: string) => {
   } catch (error) {
     console.error("Error fetching Product by Slug:", error);
     return null;
+  }
+};
+
+export const getSimilarProducts = async ({
+  categoryId,
+  currentProductId,
+}: {
+  categoryId: string;
+  currentProductId: string;
+}) => {
+  try {
+    const similarProducts = await sanityFetch({
+      query: SIMILAR_PRODUCTS_QUERY,
+      params: { categoryId, currentProductId },
+    });
+
+    return similarProducts?.data || [];
+  } catch (error) {
+    console.error("Error fetching similar products:", error);
+    return [];
   }
 };
