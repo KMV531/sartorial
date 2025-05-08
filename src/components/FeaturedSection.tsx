@@ -3,10 +3,11 @@ import React from "react";
 import ProductGrid from "./ProductGrid";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { Product } from "../../sanity.types";
 
 const FeaturedSection = async () => {
   const featuredProducts = (await getProduct())
-    .filter((product) => product.featured)
+    .filter((product: Product) => product.featured)
     .slice(0, 4);
   return (
     <>

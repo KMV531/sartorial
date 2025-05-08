@@ -3,10 +3,11 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
 import ProductGrid from "./ProductGrid";
+import { Product } from "../../sanity.types";
 
 const NewArrival = async () => {
   const newArrivals = (await getProduct())
-    .filter((product) => product.newArrival)
+    .filter((product: Product) => product.newArrival)
     .slice(0, 4);
   return (
     <>
