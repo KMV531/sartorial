@@ -2,11 +2,13 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, Search, ShoppingCart, Heart, X } from "lucide-react";
+import { Menu, ShoppingCart, Heart, X, SearchIcon } from "lucide-react";
 import Link from "next/link";
 import UserAuthSection from "./UserAuthSection";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useCartStore } from "@/store/cartStore";
+import { Search } from "./Search";
+export const dynamic = "force-dynamic";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -73,8 +75,9 @@ const Header = () => {
               className="text-brand-700 cursor-pointer"
               onClick={toggleSearch}
             >
-              <Search size={20} />
+              {searchOpen ? <X size={20} /> : <SearchIcon size={20} />}
             </Button>
+            <Search show={searchOpen} />
 
             <Link href="/wishlist">
               <Button
