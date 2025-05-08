@@ -53,7 +53,7 @@ async function performInitialIndexing() {
   const records = sanityData.map((doc: PRODUCT_QUERYResult[0]) => ({
     objectID: doc._id,
     name: doc.name,
-    slug: doc.slug?.current, // Using optional chaining because slug may be undefined
+    slug: doc.slug, // Using optional chaining because slug may be undefined
     description: doc.description,
     price: doc.price,
     category: doc.category ? doc.category._ref : null, // Handling category reference
@@ -146,7 +146,7 @@ export async function POST(request: Request) {
       const updatedDoc = {
         objectID: value._id,
         name: value.name,
-        slug: value.slug?.current,
+        slug: value.slug,
         description: value.description,
         price: value.price,
         category: value.category?.name || null,

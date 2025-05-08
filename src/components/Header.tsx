@@ -8,6 +8,7 @@ import UserAuthSection from "./UserAuthSection";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useCartStore } from "@/store/cartStore";
 import { Search } from "./Search";
+
 export const dynamic = "force-dynamic";
 
 const Header = () => {
@@ -15,12 +16,8 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
 
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
-  const toggleSearch = () => setSearchOpen(!searchOpen);
 
-  // Subscribe to the wishlist items count
   const wishlistCount = useWishlistStore((state) => state.count);
-
-  // Subscribe to the cart items count
   const cartCount = useCartStore((state) => state.getItemCount());
 
   const categories = [
@@ -34,7 +31,6 @@ const Header = () => {
     <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="container-custom">
         <div className="flex items-center justify-between py-4">
-          {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="icon"
@@ -44,7 +40,6 @@ const Header = () => {
             <Menu size={24} />
           </Button>
 
-          {/* Logo */}
           <div className="flex-shrink-0">
             <Link
               href="/"
@@ -54,7 +49,6 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {categories.map((category) => (
               <Link
@@ -67,17 +61,16 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Action buttons */}
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="icon"
               className="text-brand-700 cursor-pointer"
-              onClick={toggleSearch}
+              onClick={() => setSearchOpen(!searchOpen)}
             >
               {searchOpen ? <X size={20} /> : <SearchIcon size={20} />}
             </Button>
-            <Search show={searchOpen} />
+            <Search show={searchOpen} onClose={() => setSearchOpen(false)} />
 
             <Link href="/wishlist">
               <Button
@@ -105,37 +98,11 @@ const Header = () => {
               </Button>
             </Link>
 
-            {/* Auth Buttons */}
             <UserAuthSection />
           </div>
         </div>
       </div>
 
-      {/* Search bar overlay */}
-      {searchOpen && (
-        <div className="absolute inset-x-0 top-full bg-white py-4 shadow-md animate-fade-in">
-          <div className="container-custom">
-            <div className="flex items-center">
-              <input
-                type="search"
-                placeholder="Search for products..."
-                className="flex-1 p-2"
-                autoFocus
-              />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="ml-2 cursor-pointer"
-                onClick={toggleSearch}
-              >
-                <X size={20} />
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 bg-white animate-fade-in">
           <div className="container-custom py-4">
