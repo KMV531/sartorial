@@ -12,36 +12,37 @@ export const PRODUCT_QUERY = defineQuery(
   `*[_type == "product"] | order(_createdAt desc)`
 );
 
-export const SHORT_SLEEVE_QUERY = defineQuery(
-  `*[_type == "product" && category->slug.current == "short-sleeve"] | order(_createdAt desc)`
+export const SHIRT_QUERY = defineQuery(
+  `*[_type == "product" && category->slug.current == "shirts"] | order(_createdAt desc)`
 );
 
-export const LONG_SLEEVE_QUERY = defineQuery(
-  `*[_type == "product" && category->slug.current == "long-sleeve"] | order(_createdAt desc)`
+export const PULL_OVERS_QUERY = defineQuery(
+  `*[_type == "product" && category->slug.current == "pullovers"] | order(_createdAt desc)`
 );
 
-export const PARTY_QUERY = defineQuery(
-  `*[_type == "product" && category->slug.current == "party"] | order(_createdAt desc)`
+export const SHOES_QUERY = defineQuery(
+  `*[_type == "product" && category->slug.current == "shoes"] | order(_createdAt desc)`
 );
 
-export const TRADITIONAL_QUERY = defineQuery(
-  `*[_type == "product" && category->slug.current == "traditional"] | order(_createdAt desc)`
+export const HATS_QUERY = defineQuery(
+  `*[_type == "product" && category->slug.current == "hats"] | order(_createdAt desc)`
 );
 
 export const PRODUCT_BY_SLUG = defineQuery(
   `*[_type == "product" && slug.current == $slug] | order(name asc)[0]`
 );
 
-export const SIMILAR_PRODUCTS_QUERY = defineQuery(`
-  *[_type == "product" && category._ref == $categoryId && _id != $currentProductId] 
+export const SIMILAR_PRODUCTS_QUERY =
+  defineQuery(`*[_type == "product" && category._ref == $categoryId && _id != $currentProductId] 
   | order(_createdAt desc)[0...4] {
     _id,
     name,
-    "slug": slug.current,
+    slug,
     description,
     price,
     "images": images[].asset->url,
-    "category": category->name,
-    "categorySlug": category->slug.current,
-  }
-`);
+    "category": category->{
+      name,
+      slug
+    }
+  }`);

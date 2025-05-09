@@ -59,9 +59,9 @@ const SingleProductDetailPage = ({
     ? urlFor(product.images[0].asset)
         .width(1200)
         .height(630)
-        .format("webp") // Ensure extension and compatibility
+        .format("jpg") // Ensure extension and compatibility
         .url()
-    : `${process.env.NEXT_PUBLIC_URL}/assets/placeholder_image.webp`; // Ensure this also ends in .webp
+    : `${process.env.NEXT_PUBLIC_URL}/assets/bg-image.jpg`; // Ensure this also ends in .webp
 
   const { addItem } = useCartStore();
   const {

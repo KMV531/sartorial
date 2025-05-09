@@ -1,14 +1,14 @@
 import { sanityFetch } from "../lib/live";
 import {
   CATEGORY_QUERY,
+  HATS_QUERY,
   HERO_QUERY,
-  LONG_SLEEVE_QUERY,
-  PARTY_QUERY,
   PRODUCT_BY_SLUG,
   PRODUCT_QUERY,
-  SHORT_SLEEVE_QUERY,
+  PULL_OVERS_QUERY,
+  SHIRT_QUERY,
+  SHOES_QUERY,
   SIMILAR_PRODUCTS_QUERY,
-  TRADITIONAL_QUERY,
 } from "./query";
 
 export const getHero = async () => {
@@ -47,50 +47,50 @@ export const getProduct = async () => {
   }
 };
 
-export const getShortSleeve = async () => {
+export const getShirt = async () => {
   try {
-    const shortSleeve = await sanityFetch({
-      query: SHORT_SLEEVE_QUERY,
+    const shirt = await sanityFetch({
+      query: SHIRT_QUERY,
     });
-    return shortSleeve?.data || [];
+    return shirt?.data || [];
   } catch (error) {
-    console.error("Error fetching Short Sleeve products:", error);
+    console.error("Error fetching Shirts products:", error);
     return [];
   }
 };
 
-export const getLongSleeve = async () => {
+export const getPullOvers = async () => {
   try {
-    const longSleeve = await sanityFetch({
-      query: LONG_SLEEVE_QUERY,
+    const pullOvers = await sanityFetch({
+      query: PULL_OVERS_QUERY,
     });
-    return longSleeve?.data || [];
+    return pullOvers?.data || [];
   } catch (error) {
-    console.error("Error fetching Long Sleeve products:", error);
+    console.error("Error fetching Pullovers products:", error);
     return [];
   }
 };
 
-export const getParty = async () => {
+export const getShoes = async () => {
   try {
-    const party = await sanityFetch({
-      query: PARTY_QUERY,
+    const shoes = await sanityFetch({
+      query: SHOES_QUERY,
     });
-    return party?.data || [];
+    return shoes?.data || [];
   } catch (error) {
-    console.error("Error fetching Party products:", error);
+    console.error("Error fetching SHoes products:", error);
     return [];
   }
 };
 
-export const getTraditional = async () => {
+export const getHats = async () => {
   try {
-    const traditional = await sanityFetch({
-      query: TRADITIONAL_QUERY,
+    const hats = await sanityFetch({
+      query: HATS_QUERY,
     });
-    return traditional?.data || [];
+    return hats?.data || [];
   } catch (error) {
-    console.error("Error fetching Traditional products:", error);
+    console.error("Error fetching Hats products:", error);
     return [];
   }
 };

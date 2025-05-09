@@ -26,7 +26,7 @@ interface FilterState {
 
 interface Props {
   products: Product[];
-  categories: Category[];
+  categories: Category;
 }
 
 const MAX_PRICE = 200;
@@ -39,7 +39,7 @@ const capitalizeFirstLetter = (str: string) => {
     .join(" ");
 };
 
-const CategoryPage: React.FC<Props> = ({ products }) => {
+const CategoryPage: React.FC<Props> = ({ products, categories }) => {
   const { category } = useParams<{ category: string }>();
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -143,7 +143,9 @@ const CategoryPage: React.FC<Props> = ({ products }) => {
       <div className="container-custom py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl md:text-3xl font-bold">
-            {category ? capitalizeFirstLetter(category) : "All Products"}
+            {categories.name
+              ? capitalizeFirstLetter(categories.name)
+              : "All Products"}
           </h1>
           <Button
             variant="outline"

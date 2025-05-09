@@ -26,7 +26,7 @@ const FeaturedSection = async () => {
 
           <div className="flex justify-center mt-10">
             <Button asChild variant="outline" size="lg">
-              <Link href="/products">View All Products</Link>
+              <Link href="/category/hats">View All Products</Link>
             </Button>
           </div>
         </div>

@@ -10,7 +10,7 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4">Sartorial</h3>
             <p className="text-brand-300 text-sm">
-              Premium shirts for every occasion. Quality craftsmanship,
+              Premium products for every occasion. Quality craftsmanship,
               exceptional style.
             </p>
           </div>
@@ -21,34 +21,34 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/category/short-sleeve"
+                  href="/category/shoes"
                   className="text-brand-300 hover:text-white text-sm transition-colors"
                 >
-                  Short Sleeve
+                  Shoes
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/category/long-sleeve"
+                  href="/category/shirts"
                   className="text-brand-300 hover:text-white text-sm transition-colors"
                 >
-                  Long Sleeve
+                  Shirts
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/category/party"
+                  href="/category/hats"
                   className="text-brand-300 hover:text-white text-sm transition-colors"
                 >
-                  Party
+                  Hats
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/category/traditional"
+                  href="/category/pull-overs"
                   className="text-brand-300 hover:text-white text-sm transition-colors"
                 >
-                  Traditional
+                  Pull Overs
                 </Link>
               </li>
             </ul>

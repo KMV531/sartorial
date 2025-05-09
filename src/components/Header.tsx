@@ -8,6 +8,7 @@ import UserAuthSection from "./UserAuthSection";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useCartStore } from "@/store/cartStore";
 import { Search } from "./Search";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -21,10 +22,10 @@ const Header = () => {
   const cartCount = useCartStore((state) => state.getItemCount());
 
   const categories = [
-    { name: "Short Sleeve", path: "/category/short-sleeve" },
-    { name: "Long Sleeve", path: "/category/long-sleeve" },
-    { name: "Party", path: "/category/party" },
-    { name: "Traditional", path: "/category/traditional" },
+    { name: "Shoes", path: "/category/shoes" },
+    { name: "Pullovers", path: "/category/pullovers" },
+    { name: "Shirts", path: "/category/shirts" },
+    { name: "Hats", path: "/category/hats" },
   ];
 
   return (
@@ -41,11 +42,19 @@ const Header = () => {
           </Button>
 
           <div className="flex-shrink-0">
-            <Link
-              href="/"
-              className="text-2xl font-bold tracking-tight text-brand-900"
-            >
-              Sartorial
+            <Link href="/" className="block">
+              {/* Mobile: Logo */}
+              <Image
+                width={50}
+                height={50}
+                src="/assets/logo.jpg" // 🔁 Update to your actual logo path (must be in /public)
+                alt="Sartorial Logo"
+                className="h-8 md:hidden"
+              />
+              {/* Tablet/Desktop: Text */}
+              <span className="hidden md:inline text-2xl font-bold tracking-tight text-brand-900">
+                Sartorial
+              </span>
             </Link>
           </div>
 

@@ -12,32 +12,34 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Sartorial - Premium Shirts & Timeless Men's Fashion",
+  title:
+    "Sartorial - Premium Shirts, Shoes, Pullovers, Hats & Timeless Men's Fashion",
   description:
-    "Explore Sartorial's exclusive collection of premium shirts crafted for comfort, durability, and modern elegance. Elevate your wardrobe with timeless style.",
+    "Explore Sartorial's exclusive collection of premium shirts, Shoes, Pullovers, Hats crafted for comfort, durability, and modern elegance. Elevate your wardrobe with timeless style.",
   keywords: [
     "mens shirts",
-    "premium shirts",
+    "premium Pullovers",
     "fashion",
     "sustainable clothing",
     "Sartorial",
-    "formal shirts",
-    "casual shirts",
+    "formal Hats",
+    "casual Shoes",
     "modern menswear",
   ],
   metadataBase: new URL(`${process.env.NEXT_PUBLIC_URL}`), // update to your actual domain
   openGraph: {
-    title: "Sartorial - Premium Shirts for Every Occasion",
+    title:
+      "Sartorial - Premium Shirts, Shoes, Pullovers, Hats for Every Occasion",
     description:
-      "Shop Sartorial's timeless, sustainable shirts built for comfort and style.",
+      "Shop Sartorial's timeless, sustainable Shirts, Shoes, Pullovers, Hats built for comfort and style.",
     url: `${process.env.NEXT_PUBLIC_URL}`,
     siteName: "Sartorial",
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_URL}/assets/placeholder_image.svg`, // replace with actual OG image
+        url: `${process.env.NEXT_PUBLIC_URL}/assets/bg-image.jpg`, // replace with actual OG image
         width: 1200,
         height: 630,
-        alt: "Sartorial premium shirts collection",
+        alt: "Sartorial premium Shirts, Shoes, Pullovers, Hats collection",
       },
     ],
     type: "website",
@@ -46,12 +48,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sartorial - Elevate Your Style",
     description:
-      "Discover premium, comfortable shirts for men, women, kids. Crafted with care. Designed to last.",
-    images: [`${process.env.NEXT_PUBLIC_URL}/assets/placeholder_image.svg`],
+      "Discover premium, comfortable Shirts, Shoes, Pullovers, Hats for men, women, kids. Crafted with care. Designed to last.",
+    images: [`${process.env.NEXT_PUBLIC_URL}/assets/bg-image.jpg`],
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-32x32.png",
+    icon: "/assets/favicon.jpg",
+    shortcut: "/assets/favicon-32x32.jpg",
     apple: "/apple-touch-icon.png",
   },
 };
@@ -64,7 +66,10 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <head />
+        <head>
+          {/* ✅ Explicit link fallback (optional, Next will auto inject from metadata too) */}
+          <link rel="icon" href="/assets/favicon.jpg" type="image/jpg+xml" />
+        </head>
         <body
           className={`${poppins.className} antialiased bg-white text-black`}
         >
