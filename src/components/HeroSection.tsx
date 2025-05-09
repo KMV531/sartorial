@@ -45,8 +45,8 @@ const HeroSection = ({ hero }: { hero: HERO_QUERYResult }) => {
                 <div className="w-full max-w-md aspect-[3/4] bg-white/10 rounded-md overflow-hidden">
                   <Image
                     src={urlFor(item?.image).url()}
-                    width={500}
-                    height={500}
+                    width={800}
+                    height={800}
                     priority
                     alt={`${item?.title}`}
                     className="w-full h-full object-cover"
