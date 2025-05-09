@@ -28,7 +28,7 @@ const HeroSection = ({ hero }: { hero: HERO_QUERYResult }) => {
                   size="lg"
                   className="bg-white text-brand-900 hover:bg-brand-100"
                 >
-                  <Link href="/category/short-sleeve">Shop Collection</Link>
+                  <Link href="/category/shirts">Shop Collection</Link>
                 </Button>
                 <Button
                   asChild

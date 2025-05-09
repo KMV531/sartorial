@@ -45,7 +45,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/category/pull-overs"
+                  href="/category/pullovers"
                   className="text-brand-300 hover:text-white text-sm transition-colors"
                 >
                   Pull Overs
