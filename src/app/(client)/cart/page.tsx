@@ -22,6 +22,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import CheckoutModal from "@/components/CheckoutModal";
 
 const CartPage = () => {
   const router = useRouter();
@@ -38,6 +39,8 @@ const CartPage = () => {
 
   const totalPrice = getTotalPrice();
   const totalItems = getTotalItems();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -93,8 +96,7 @@ const CartPage = () => {
   };
 
   const handleProceedToCheckout = () => {
-    // This would be replaced with actual checkout logic
-    router.push("/checkout");
+    setIsModalOpen(true);
   };
 
   return (
@@ -489,11 +491,12 @@ const CartPage = () => {
               Looks like you haven&apos;t added any items to your cart yet.
             </p>
             <Button asChild size="lg">
-              <Link href="/category/short-sleeve">Start Shopping</Link>
+              <Link href="/">Start Shopping</Link>
             </Button>
           </div>
         )}
       </div>
+      <CheckoutModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </Layout>
   );
 };
