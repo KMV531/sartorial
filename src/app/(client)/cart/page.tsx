@@ -23,9 +23,11 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import CheckoutModal from "@/components/CheckoutModal";
+import { useUser } from "@clerk/nextjs";
 
 const CartPage = () => {
   const router = useRouter();
+  const { user, isSignedIn } = useUser();
   const [promoCode, setPromoCode] = useState("");
 
   const {
@@ -96,7 +98,13 @@ const CartPage = () => {
   };
 
   const handleProceedToCheckout = () => {
-    setIsModalOpen(true);
+    if (!user || !isSignedIn) {
+      // Save intent to return to cart/checkout
+      localStorage.setItem("redirectAfterLogin", "/cart"); // or another route
+      router.push("/sign-in");
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   return (

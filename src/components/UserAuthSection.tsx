@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import { ClerkLoaded, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
-import React from 'react'
-import { User, ShoppingBasket } from 'lucide-react'
-import Link from 'next/link'
-import { Button } from './ui/button'
+import { ClerkLoaded, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import React from "react";
+import { User, ShoppingBasket } from "lucide-react";
+import Link from "next/link";
+import { Button } from "./ui/button";
 
 const UserAuthSection = () => {
   return (
     <ClerkLoaded>
       {/* Signed in user UI */}
       <SignedIn>
-        <Link href='/orders'>
+        <Link href="/orders" className="hidden">
           <Button
-            variant='ghost'
-            size='icon'
-            className='text-brand-700 relative cursor-pointer'
+            variant="ghost"
+            size="icon"
+            className="text-brand-700 relative cursor-pointer"
           >
             <ShoppingBasket size={20} />
-            <span className='absolute -top-1 -right-1 bg-brand-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center'>
+            <span className="absolute -top-1 -right-1 bg-brand-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
               {0}
             </span>
           </Button>
@@ -28,18 +28,18 @@ const UserAuthSection = () => {
 
       {/* Signed out user UI */}
       <SignedOut>
-        <Link href={'/sign-in'}>
+        <Link href={"/sign-in"}>
           <Button
-            variant='ghost'
-            size='icon'
-            className='text-brand-700 cursor-pointer'
+            variant="ghost"
+            size="icon"
+            className="text-brand-700 cursor-pointer"
           >
             <User size={20} />
           </Button>
         </Link>
       </SignedOut>
     </ClerkLoaded>
-  )
-}
+  );
+};
 
-export default UserAuthSection
+export default UserAuthSection;

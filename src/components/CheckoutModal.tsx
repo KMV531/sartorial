@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/cartStore";
 import { urlFor } from "@/sanity/lib/image";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 interface CheckoutModalProps {
   open: boolean;
@@ -19,14 +20,17 @@ interface CheckoutModalProps {
 }
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
+  const { user, isSignedIn } = useUser();
   const { items, getTotalPrice, clearCart } = useCartStore();
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
 
   const handleConfirmOrder = () => {
-    if (!name || !phone || !address) {
+    if (!username || !email || !phone || !address) {
       toast("Incomplete Form", {
         description: "Please fill out all fields.",
         style: {
@@ -62,7 +66,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
     const totalPrice = getTotalPrice();
     const message = `*New Order*
 
-Name: ${name}
+Name: ${username}
+Email: ${email}
 Phone: ${fullPhone}
 Address: ${address}
 Payment Method: ${paymentMethod}
@@ -76,7 +81,8 @@ ${orderLines}
     const whatsappUrl = `https://wa.me/237690857180?text=${encodedMessage}`; // Replace with your number
 
     // Immediately reset and close modal
-    setName("");
+    setUsername("");
+    setEmail("");
     setPhone("");
     setAddress("");
     setPaymentMethod("Cash on Delivery");
@@ -95,6 +101,13 @@ ${orderLines}
     }, 2100);
   };
 
+  useEffect(() => {
+    if (isSignedIn && user) {
+      setUsername(user.username || "");
+      setEmail(user.primaryEmailAddress?.emailAddress || "");
+    }
+  }, [user, isSignedIn]);
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -104,11 +117,21 @@ ${orderLines}
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Full Name:</label>
+            <label className="block text-sm font-medium mb-1">Username:</label>
             <Input
               placeholder="Enter your full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Email:</label>
+            <Input
+              placeholder="Enter your full name"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled
             />
           </div>
           <div className="flex items-center border rounded overflow-hidden">
