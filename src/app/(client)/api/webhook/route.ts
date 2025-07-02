@@ -1,6 +1,193 @@
 import { writeClient } from "@/sanity/lib/client";
 import { NextResponse } from "next/server";
 
+type CartItem = {
+  productId: string;
+  quantity: number;
+  price: number;
+  size?: string;
+  color?: {
+    name?: string;
+  };
+  selectedSize?: string;
+  selectedColor?: {
+    name?: string;
+  };
+};
+
+type WebhookPayload = {
+  eventType: string;
+  resource: {
+    requestId: string;
+    status: string;
+    amount: number;
+    currencyCode: string;
+    transactionStatus?: string;
+    createdAt: string;
+    transactionTime?: string;
+    transactionId?: string;
+    mchTransactionRef?: string;
+    partnerTransactionId?: string;
+    payerNote?: string;
+    serviceDiscountAmount?: number;
+    receivingEntityName?: string;
+    transactionTag?: string;
+    appId?: string;
+    payer?: {
+      userId?: string;
+      name?: string;
+      paymentMethod?: string;
+      countryCode?: string;
+      accountId?: string;
+      accountName?: string;
+      email?: string;
+      amount?: number;
+      netAmountPaid?: number;
+    };
+    merchant?: {
+      accountId?: string;
+      amount?: number;
+      fee?: number;
+      netAmountReceived?: number;
+    };
+  };
+  cartItems?: CartItem[];
+  customer?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+  };
+};
+
+type ProductVariant = {
+  name: string;
+  price: number;
+};
+
+async function getProductInfo(productId: string) {
+  const query = `*[_type=="product" && _id == $id][0]{
+    name,
+    category->{title},
+    variants[]{
+      name,
+      price
+    }
+  }`;
+  return await writeClient.fetch(query, { id: productId });
+}
+
+export async function POST(request: Request) {
+  try {
+    const payload: WebhookPayload = await request.json();
+
+    console.log(
+      "✅ Received webhook payload:",
+      JSON.stringify(payload, null, 2)
+    );
+
+    if (
+      payload.eventType === "REQUEST.COMPLETED" &&
+      payload.resource.status === "SUCCESSFUL"
+    ) {
+      const transactionRef = payload.resource.mchTransactionRef;
+
+      if (!transactionRef) {
+        console.error("❌ Missing mchTransactionRef in webhook payload");
+        return NextResponse.json(
+          { error: "Missing mchTransactionRef" },
+          { status: 400 }
+        );
+      }
+
+      // Find the existing order by transactionRef
+      const existingOrders = await writeClient.fetch(
+        `*[_type == "order" && transactionRef == $transactionRef]`,
+        { transactionRef }
+      );
+
+      if (existingOrders.length === 0) {
+        console.warn("❌ Order not found for transactionRef:", transactionRef);
+        return NextResponse.json({ error: "Order not found" }, { status: 404 });
+      }
+
+      const orderId = existingOrders[0]._id;
+
+      const items = Array.isArray(payload.cartItems) ? payload.cartItems : [];
+
+      // Prepare simplified items with product info fetched from Sanity
+      const simplifiedItems = [];
+      for (const item of items) {
+        const productInfo = await getProductInfo(item.productId);
+
+        simplifiedItems.push({
+          _key: item.productId,
+          product: {
+            _type: "object",
+            name: productInfo?.name || "Unknown product",
+            category: productInfo?.category?.title || "",
+            price: productInfo?.variants?.[0]?.price || 0,
+            variants:
+              productInfo?.variants?.map((v: ProductVariant) => ({
+                name: v.name,
+                price: v.price,
+              })) || [],
+          },
+          quantity: item.quantity,
+          size: item.size || item.selectedSize || "",
+          color: item.color || item.selectedColor || null,
+        });
+      }
+
+      // Patch (update) the existing order with full info
+      await writeClient
+        .patch(orderId)
+        .set({
+          transactionId: payload.resource.transactionId,
+          partnerTransactionId: payload.resource.partnerTransactionId,
+          paymentStatus: "completed",
+          paymentMethod: payload.resource.payer?.paymentMethod,
+          amount: payload.resource.amount,
+          currency: payload.resource.currencyCode,
+          customer: {
+            name: payload.customer?.name || "",
+            email: payload.customer?.email || "",
+            phone: payload.customer?.phone || "",
+            address: payload.customer?.address || "",
+          },
+          payerName: payload.resource.payer?.name || "",
+          payerAccountId: payload.resource.payer?.accountId || "",
+          payerUserId: payload.resource.payer?.userId || "",
+          payerNote: payload.resource.payerNote || "",
+          transactionTime: payload.resource.transactionTime || "",
+          merchantAccountId: payload.resource.merchant?.accountId || "",
+          merchantFee: payload.resource.merchant?.fee || 0,
+          netAmountReceived: payload.resource.merchant?.netAmountReceived || 0,
+          receivingEntity: payload.resource.receivingEntityName || "",
+          items: simplifiedItems,
+        })
+        .commit();
+
+      console.log("✅ Order updated successfully:", orderId);
+
+      return NextResponse.json({ success: true });
+    }
+
+    console.log("📭 Webhook event type not handled:", payload.eventType);
+
+    return NextResponse.json({ success: true });
+  } catch (error: unknown) {
+    console.error("🚨 Webhook processing error:", error);
+    let errorMessage = "Internal server error";
+    if (error instanceof Error) errorMessage = error.message;
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  }
+}
+
+/* 
+import { writeClient } from "@/sanity/lib/client";
+import { NextResponse } from "next/server";
+
 // Define types for the webhook payload
 type CartItem = {
   productId: string;
@@ -9,12 +196,10 @@ type CartItem = {
   size?: string;
   color?: {
     name?: string;
-    value?: string;
   };
   selectedSize?: string;
   selectedColor?: {
     name?: string;
-    value?: string;
   };
 };
 
@@ -119,3 +304,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
+
+*/

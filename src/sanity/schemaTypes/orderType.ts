@@ -156,10 +156,7 @@ export const orderType = defineType({
               name: "color",
               title: "Color",
               type: "object",
-              fields: [
-                { name: "name", title: "Name", type: "string" },
-                { name: "value", title: "Value", type: "string" },
-              ],
+              fields: [{ name: "name", title: "Name", type: "string" }],
             }),
           ],
         },
