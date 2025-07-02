@@ -20,6 +20,14 @@ export const orderType = defineType({
       },
     }),
     defineField({
+      name: "paymentMethod",
+      title: "Payment Method",
+      type: "string",
+      options: {
+        list: ["mobile", "card", "bank"],
+      },
+    }),
+    defineField({
       name: "amount",
       title: "Amount",
       type: "number",
@@ -73,14 +81,7 @@ export const orderType = defineType({
       title: "Created At",
       type: "datetime",
     }),
-    defineField({
-      name: "paymentMethod",
-      title: "Payment Method",
-      type: "string",
-      options: {
-        list: ["mobile", "card", "bank"],
-      },
-    }),
+
     defineField({
       name: "bankDetails",
       title: "Bank Details",
