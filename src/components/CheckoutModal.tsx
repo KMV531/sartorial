@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +9,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/cartStore";
-import { urlFor } from "@/sanity/lib/image";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
+import { Loader2 } from "lucide-react";
 
 interface CheckoutModalProps {
   open: boolean;
@@ -20,19 +19,23 @@ interface CheckoutModalProps {
 }
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
+  const { items, getTotalPrice } = useCartStore();
+  const [isLoading, setIsLoading] = useState(false);
   const { user, isSignedIn } = useUser();
-  const { items, getTotalPrice, clearCart } = useCartStore();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [formData, setFormData] = useState({
+    name: isSignedIn && user ? user.fullName || "" : "",
+    email:
+      isSignedIn && user ? user.primaryEmailAddress?.emailAddress || "" : "",
+    phone: "",
+    address: "",
+    paymentMethod: "mobile" as "mobile" | "card" | "bank",
+    bankDetails: { accountNumber: "", bankCode: "" },
+  });
 
-  const [address, setAddress] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
-
-  const handleConfirmOrder = () => {
-    if (!username || !email || !phone || !address) {
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.email || !formData.address) {
       toast("Incomplete Form", {
-        description: "Please fill out all fields.",
+        description: "Please fill out all required fields.",
         style: {
           backgroundColor: "red",
           color: "white",
@@ -42,143 +45,221 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
       return;
     }
 
-    const orderLines = items
-      .map((item) => {
-        const variant = item.product.variants?.find(
-          (v) => v.variantId === item.variantId
-        );
-        const price = variant?.price || item.product.price;
-        const imageUrl = item.product.images?.[0]
-          ? urlFor(item.product.images[0]).url()
-          : "No image";
-        return `• ${item.product.name}
-  Size: ${item.selectedSize}
-  Color: ${item.selectedColor.name}
-  Quantity: ${item.quantity}
-  Price: $${price}
-  Image: ${imageUrl}`;
-      })
-      .join("\n\n");
-
-    // Make sure phone starts with +237
-    const fullPhone = phone.startsWith("+237") ? phone : "+237" + phone;
-
-    const totalPrice = getTotalPrice();
-    const message = `*New Order*
-
-Name: ${username}
-Email: ${email}
-Phone: ${fullPhone}
-Address: ${address}
-Payment Method: ${paymentMethod}
-
-*Order Details:*
-${orderLines}
-
-*Total:* $${totalPrice.toFixed(2)}`;
-
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/237690857180?text=${encodedMessage}`; // Replace with your number
-
-    // Immediately reset and close modal
-    setUsername("");
-    setEmail("");
-    setPhone("");
-    setAddress("");
-    setPaymentMethod("Cash on Delivery");
-    clearCart();
-    onClose();
-
-    // Show success toast first
-    toast.success("Order sent! Opening WhatsApp...", {
-      style: { backgroundColor: "green", color: "white", padding: "10px" },
-      duration: 2000,
-    });
-
-    // Then open WhatsApp after toast duration
-    setTimeout(() => {
-      window.open(whatsappUrl, "_blank");
-    }, 2100);
-  };
-
-  useEffect(() => {
-    if (isSignedIn && user) {
-      setUsername(user.username || "");
-      setEmail(user.primaryEmailAddress?.emailAddress || "");
+    if (formData.paymentMethod === "mobile" && !formData.phone) {
+      toast("Phone Required", {
+        description: "Please enter your phone number for mobile payment.",
+        style: {
+          backgroundColor: "red",
+          color: "white",
+          padding: "10px",
+        },
+      });
+      return;
     }
-  }, [user, isSignedIn]);
+
+    if (
+      formData.paymentMethod === "bank" &&
+      (!formData.bankDetails.accountNumber || !formData.bankDetails.bankCode)
+    ) {
+      toast("Bank Details Required", {
+        description: "Please enter your bank account details.",
+        style: {
+          backgroundColor: "red",
+          color: "white",
+          padding: "10px",
+        },
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/initiate-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          customerName: formData.name,
+          cartItems: items,
+          customer: {
+            name: formData.name,
+            email: formData.email,
+            address: formData.address,
+            phone: formData.phone,
+          },
+          totalAmount: getTotalPrice(),
+          discountAmount: 0,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      toast.error("Payment failed", {
+        description: "There was an error processing your payment.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Provide Delivery Information</DialogTitle>
+          <DialogTitle>Complete Your Payment</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Username:</label>
+            <label className="block text-sm font-medium mb-1">Full Name:</label>
             <Input
               placeholder="Enter your full name"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               disabled
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">Email:</label>
             <Input
-              placeholder="Enter your full name"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              type="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               disabled
             />
           </div>
-          <div className="flex items-center border rounded overflow-hidden">
-            <span className="px-3 bg-gray-200 text-gray-700 select-none">
-              +237
-            </span>
-            <Input
-              type="tel"
-              placeholder="Enter your phone number"
-              value={phone}
-              onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, "");
-                setPhone(val);
-              }}
-              className="flex-1 border-none focus:ring-0 focus:outline-none"
-            />
-          </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">
               Delivery Address:
             </label>
             <Input
-              placeholder="Enter your address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter your full address"
+              value={formData.address}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
+              required
             />
           </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">
               Payment Method:
             </label>
             <select
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
+              value={formData.paymentMethod}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  paymentMethod: e.target.value as "mobile" | "card" | "bank",
+                })
+              }
               className="w-full border px-3 py-2 rounded text-sm cursor-pointer"
             >
-              <option>Cash on Delivery</option>
-              <option>MTN Mobile Money</option>
-              <option>Orange Money</option>
+              <option value="mobile">Mobile Money</option>
+              <option value="card">Credit/Debit Card</option>
+              <option value="bank">Bank Transfer</option>
             </select>
+          </div>
+
+          {formData.paymentMethod === "mobile" && (
+            <div className="flex items-center border rounded overflow-hidden">
+              <span className="px-3 bg-gray-200 text-gray-700 select-none">
+                +237
+              </span>
+              <Input
+                type="tel"
+                placeholder="Enter your phone number"
+                value={formData.phone}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  setFormData({ ...formData, phone: val });
+                }}
+                className="flex-1 border-none focus:ring-0 focus:outline-none"
+                required
+              />
+            </div>
+          )}
+
+          {formData.paymentMethod === "bank" && (
+            <>
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Account Number:
+                </label>
+                <Input
+                  placeholder="Enter account number"
+                  value={formData.bankDetails.accountNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      bankDetails: {
+                        ...formData.bankDetails,
+                        accountNumber: e.target.value,
+                      },
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Select Bank:
+                </label>
+                <select
+                  value={formData.bankDetails.bankCode}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      bankDetails: {
+                        ...formData.bankDetails,
+                        bankCode: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full border px-3 py-2 rounded text-sm cursor-pointer"
+                  required
+                >
+                  <option value="">Select Bank</option>
+                  <option value="BICEC">BICEC</option>
+                  <option value="ECOBANK">Ecobank</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          <div className="pt-4 border-t">
+            <div className="flex justify-between font-semibold">
+              <span>Total:</span>
+              <span>${getTotalPrice().toFixed(2)}</span>
+            </div>
           </div>
 
           <Button
             className="w-full mt-4 cursor-pointer"
-            onClick={handleConfirmOrder}
+            onClick={handleSubmit}
+            disabled={isLoading}
           >
-            Confirm Order via WhatsApp
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing Payment...
+              </>
+            ) : (
+              "Proceed to Payment"
+            )}
           </Button>
         </div>
       </DialogContent>
