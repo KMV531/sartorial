@@ -14,5 +14,5 @@ export const writeClient = createClient({
   dataset,
   apiVersion,
   useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
-  token: process.env.SANITY_API_TOKEN,
+  token: process.env.SANITY_API_READ_TOKEN,
 });
