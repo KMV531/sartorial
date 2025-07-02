@@ -163,6 +163,18 @@ export const orderType = defineType({
       ],
     }),
   ],
+  preview: {
+    select: {
+      title: "transactionId",
+      subtitle: "transactionRef",
+    },
+    prepare(selection) {
+      return {
+        title: selection.title,
+        subtitle: selection.subtitle,
+      };
+    },
+  },
 });
 
 /* 
