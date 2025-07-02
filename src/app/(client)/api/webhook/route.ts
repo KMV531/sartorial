@@ -100,12 +100,11 @@ export async function POST(request: Request) {
         );
       }
 
-      // Find the existing order by transactionRef
+      // Find order in Sanity:
       const existingOrders = await writeClient.fetch(
         `*[_type == "order" && transactionRef == $transactionRef]`,
         { transactionRef }
       );
-
       if (existingOrders.length === 0) {
         console.warn("❌ Order not found for transactionRef:", transactionRef);
         return NextResponse.json({ error: "Order not found" }, { status: 404 });
