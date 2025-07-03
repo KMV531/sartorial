@@ -34,37 +34,13 @@ export async function POST(request: Request) {
     const body: RequestBody = await request.json();
     console.log("✅ Incoming request body:", JSON.stringify(body, null, 2));
 
-    // 1. Generate transactionRef once here
+    // Generate your own transactionRef (optional)
     const transactionRef = `ORDER-${Date.now()}`;
-
-    // Create a pending order in Sanity
-    await writeClient.create({
-      _type: "order",
-      transactionRef: transactionRef, // save it here
-      paymentStatus: "pending",
-      amount: body.totalAmount,
-      currency: "XAF",
-      customer: {
-        name: body.customer?.name || "",
-        email: body.customer?.email || "",
-        phone: body.customer?.phone || "",
-        address: body.customer?.address || "",
-      },
-      items: body.cartItems.map((item) => ({
-        _key: item.productId,
-        product: { _type: "reference", _ref: item.productId },
-        quantity: item.quantity,
-        price: item.price,
-        size: item.selectedSize || "",
-        color: item.selectedColor || null,
-      })),
-      payerNote: `Commande Sartorial - ${body.customerName || "Client inconnu"}`,
-      createdAt: new Date().toISOString(),
-    });
 
     const token = await getTranzakToken();
     console.log("🔐 Retrieved Tranzak token");
 
+    // Prepare payload for Tranzak API
     const paymentPayload = {
       amount: body.totalAmount,
       currencyCode: "XAF",
@@ -72,7 +48,7 @@ export async function POST(request: Request) {
       payerNote: `Commande Sartorial - ${body.customerName || "Client inconnu"}`,
       customer: body.customer,
       cartItems: body.cartItems,
-      mchTransactionRef: transactionRef, // SAME string here
+      mchTransactionRef: transactionRef, // your internal ref
       returnUrl: `${process.env.NEXT_PUBLIC_URL}/payment-success`,
       cancelUrl: `${process.env.NEXT_PUBLIC_URL}/cart`,
       callbackUrl: `${process.env.NEXT_PUBLIC_MERCHANT_URL}/api/webhook`,
@@ -137,6 +113,32 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    // Create pending order in Sanity with resourceId (requestId from Tranzak)
+    await writeClient.create({
+      _type: "order",
+      transactionRef,
+      resourceId: data.data.requestId, // Save Tranzak unique resourceId here
+      paymentStatus: "pending",
+      amount: body.totalAmount,
+      currency: "XAF",
+      customer: {
+        name: body.customer?.name || "",
+        email: body.customer?.email || "",
+        phone: body.customer?.phone || "",
+        address: body.customer?.address || "",
+      },
+      items: body.cartItems.map((item) => ({
+        _key: item.productId,
+        product: { _type: "reference", _ref: item.productId },
+        quantity: item.quantity,
+        price: item.price,
+        size: item.selectedSize || "",
+        color: item.selectedColor || null,
+      })),
+      payerNote: `Commande Sartorial - ${body.customerName || "Client inconnu"}`,
+      createdAt: new Date().toISOString(),
+    });
 
     console.log("🔁 Redirecting to payment URL:", redirectUrl);
 

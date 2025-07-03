@@ -8,39 +8,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useCartStore } from "@/store/cartStore";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
-import { useCartStore } from "@/store/cartStore";
 
 interface CheckoutModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-// 👇 This must be outside the component
-function prepareCartPayload() {
-  const cartItems = useCartStore.getState().items;
-
-  return cartItems.map((item) => {
-    const variant = item?.product?.variants?.find(
-      (v) => v.variantId === item.variantId
-    );
-
-    return {
-      productId: item.productId,
-      variantId: item.variantId,
-      name: item.product.name,
-      price: variant?.price ?? item.product.price ?? 0,
-      quantity: item.quantity,
-      selectedSize: item.selectedSize,
-      selectedColor: item.selectedColor,
-    };
-  });
-}
-
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
-  const { getTotalPrice } = useCartStore();
+  const { items, getTotalPrice } = useCartStore();
   const [isLoading, setIsLoading] = useState(false);
   const { user, isSignedIn } = useUser();
   const [formData, setFormData] = useState({
@@ -57,7 +36,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
     if (!formData.name || !formData.email || !formData.address) {
       toast("Incomplete Form", {
         description: "Please fill out all required fields.",
-        style: { backgroundColor: "red", color: "white", padding: "10px" },
+        style: {
+          backgroundColor: "red",
+          color: "white",
+          padding: "10px",
+        },
       });
       return;
     }
@@ -65,7 +48,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
     if (formData.paymentMethod === "mobile" && !formData.phone) {
       toast("Phone Required", {
         description: "Please enter your phone number for mobile payment.",
-        style: { backgroundColor: "red", color: "white", padding: "10px" },
+        style: {
+          backgroundColor: "red",
+          color: "white",
+          padding: "10px",
+        },
       });
       return;
     }
@@ -76,12 +63,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
     ) {
       toast("Bank Details Required", {
         description: "Please enter your bank account details.",
-        style: { backgroundColor: "red", color: "white", padding: "10px" },
+        style: {
+          backgroundColor: "red",
+          color: "white",
+          padding: "10px",
+        },
       });
       return;
     }
-
-    const cartPayload = prepareCartPayload();
 
     setIsLoading(true);
     try {
@@ -91,17 +80,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
         body: JSON.stringify({
           ...formData,
           customerName: formData.name,
-          cartItems: cartPayload,
+          cartItems: items,
           customer: {
             name: formData.name,
             email: formData.email,
             address: formData.address,
             phone: formData.phone,
           },
-          totalAmount: cartPayload.reduce(
-            (acc, item) => acc + item.price * item.quantity,
-            0
-          ),
+          totalAmount: getTotalPrice(),
           discountAmount: 0,
         }),
       });

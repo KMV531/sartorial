@@ -138,23 +138,13 @@ export const orderType = defineType({
               to: [{ type: "product" }],
             }),
             defineField({
-              name: "name",
-              title: "Product Name",
-              type: "string",
-            }),
-            defineField({
-              name: "variantId",
-              title: "Variant ID",
-              type: "string",
-            }),
-            defineField({
-              name: "price",
-              title: "Variant Price",
+              name: "quantity",
+              title: "Quantity",
               type: "number",
             }),
             defineField({
-              name: "quantity",
-              title: "Quantity",
+              name: "price",
+              title: "Price",
               type: "number",
             }),
             defineField({

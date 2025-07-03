@@ -18,7 +18,7 @@ type CartItem = {
 type WebhookPayload = {
   eventType: string;
   resource: {
-    requestId: string;
+    requestId: string; // resourceId
     status: string;
     amount: number;
     currencyCode: string;
@@ -60,23 +60,6 @@ type WebhookPayload = {
   };
 };
 
-type ProductVariant = {
-  name: string;
-  price: number;
-};
-
-async function getProductInfo(productId: string) {
-  const query = `*[_type=="product" && _id == $id][0]{
-    name,
-    category->{title},
-    variants[]{
-      name,
-      price
-    }
-  }`;
-  return await writeClient.fetch(query, { id: productId });
-}
-
 export async function POST(request: Request) {
   try {
     const payload: WebhookPayload = await request.json();
@@ -90,55 +73,29 @@ export async function POST(request: Request) {
       payload.eventType === "REQUEST.COMPLETED" &&
       payload.resource.status === "SUCCESSFUL"
     ) {
-      const transactionRef = payload.resource.mchTransactionRef;
+      const resourceId = payload.resource.requestId;
 
-      if (!transactionRef) {
-        console.error("❌ Missing mchTransactionRef in webhook payload");
+      if (!resourceId) {
+        console.error("❌ Missing requestId (resourceId) in webhook payload");
         return NextResponse.json(
-          { error: "Missing mchTransactionRef" },
+          { error: "Missing requestId (resourceId)" },
           { status: 400 }
         );
       }
 
-      // Find order in Sanity:
+      // Find order in Sanity by resourceId:
       const existingOrders = await writeClient.fetch(
-        `*[_type == "order" && transactionRef == $transactionRef]`,
-        { transactionRef: payload.resource.mchTransactionRef }
+        `*[_type == "order" && resourceId == $resourceId]`,
+        { resourceId }
       );
       if (existingOrders.length === 0) {
-        console.warn("❌ Order not found for transactionRef:", transactionRef);
+        console.warn("❌ Order not found for resourceId:", resourceId);
         return NextResponse.json({ error: "Order not found" }, { status: 404 });
       }
 
       const orderId = existingOrders[0]._id;
 
-      const items = Array.isArray(payload.cartItems) ? payload.cartItems : [];
-
-      // Prepare simplified items with product info fetched from Sanity
-      const simplifiedItems = [];
-      for (const item of items) {
-        const productInfo = await getProductInfo(item.productId);
-
-        simplifiedItems.push({
-          _key: item.productId,
-          product: {
-            _type: "object",
-            name: productInfo?.name || "Unknown product",
-            category: productInfo?.category?.title || "",
-            price: productInfo?.variants?.[0]?.price || 0,
-            variants:
-              productInfo?.variants?.map((v: ProductVariant) => ({
-                name: v.name,
-                price: v.price,
-              })) || [],
-          },
-          quantity: item.quantity,
-          size: item.size || item.selectedSize || "",
-          color: item.color || item.selectedColor || null,
-        });
-      }
-
-      // Patch (update) the existing order with full info
+      // PATCH: update all except customer and items
       await writeClient
         .patch(orderId)
         .set({
@@ -148,12 +105,8 @@ export async function POST(request: Request) {
           paymentMethod: payload.resource.payer?.paymentMethod,
           amount: payload.resource.amount,
           currency: payload.resource.currencyCode,
-          customer: {
-            name: payload.customer?.name || "",
-            email: payload.customer?.email || "",
-            phone: payload.customer?.phone || "",
-            address: payload.customer?.address || "",
-          },
+          // CUSTOMER INFO left untouched here
+          // ITEMS left untouched here
           payerName: payload.resource.payer?.name || "",
           payerAccountId: payload.resource.payer?.accountId || "",
           payerUserId: payload.resource.payer?.userId || "",
@@ -163,11 +116,13 @@ export async function POST(request: Request) {
           merchantFee: payload.resource.merchant?.fee || 0,
           netAmountReceived: payload.resource.merchant?.netAmountReceived || 0,
           receivingEntity: payload.resource.receivingEntityName || "",
-          items: simplifiedItems,
         })
         .commit();
 
-      console.log("✅ Order updated successfully:", orderId);
+      console.log(
+        "✅ Order updated successfully (except customer & items):",
+        orderId
+      );
 
       return NextResponse.json({ success: true });
     }
