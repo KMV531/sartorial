@@ -16,7 +16,6 @@ type CartItem = {
 type Customer = {
   name?: string;
   email?: string;
-  phone?: string;
   address?: string;
 };
 
@@ -112,7 +111,6 @@ export async function POST(request: Request) {
       customer: {
         name: body.customer?.name || "",
         email: body.customer?.email || "",
-        phone: body.customer?.phone || "",
         address: body.customer?.address || "",
       },
       items: body.cartItems.map((item) => ({

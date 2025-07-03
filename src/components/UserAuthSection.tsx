@@ -11,7 +11,7 @@ const UserAuthSection = () => {
     <ClerkLoaded>
       {/* Signed in user UI */}
       <SignedIn>
-        <Link href="/orders" className="hidden">
+        <Link href="/orders">
           <Button
             variant="ghost"
             size="icon"

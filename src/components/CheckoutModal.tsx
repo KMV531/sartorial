@@ -97,8 +97,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
       });
 
       const data = await response.json();
-      if (data.paymentUrl) {
-        window.location.href = data.paymentUrl;
+      if (data.paymentUrl && data.requestId) {
+        // Append resourceId to the payment URL so your success page can read it
+        const separator = data.paymentUrl.includes("?") ? "&" : "?";
+        window.location.href = `${data.paymentUrl}${separator}resourceId=${data.requestId}`;
+      } else {
+        toast.error(
+          "Payment initialization failed: Missing payment URL or requestId"
+        );
       }
     } catch (error) {
       console.error("Checkout error:", error);
