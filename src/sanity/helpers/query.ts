@@ -48,9 +48,11 @@ export const SIMILAR_PRODUCTS_QUERY =
   }`);
 
 export const MY_ORDERS_QUERY = defineQuery(
-  `*[_type == "order" && clerkUserId == $userId] | order(orderData desc){
-  ...,products[] {
-  ...,product->
-  }
+  `*[_type == "order" && clerkUserId == $userId] | order(orderDate desc){
+    ...,
+    products[] {
+      ...,
+      product->
+    }
   }`
 );

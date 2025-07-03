@@ -68,6 +68,63 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type Order = {
+  _id: string;
+  _type: "order";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+
+  transactionId?: string;
+  transactionRef?: string;
+  resourceId?: string;
+  partnerTransactionId?: string;
+  clerkUserId?: string;
+
+  paymentStatus?: "pending" | "completed" | "failed";
+  paymentMethod?: string;
+  amount?: number;
+  currency?: string;
+
+  customer?: {
+    name?: string;
+    email?: string;
+    address?: string;
+  };
+
+  payerName?: string;
+  payerAccountId?: string;
+  payerUserId?: string;
+  payerNote?: string;
+  transactionTime?: string;
+  createdAt?: string;
+
+  merchantAccountId?: string;
+  merchantFee?: number;
+  netAmountReceived?: number;
+  receivingEntity?: string;
+
+  items?: Array<{
+    productImage?: {
+      _type: "image";
+      asset: {
+        _ref: string;
+        _type: "reference";
+      };
+    };
+    name?: string;
+    variantId?: string;
+    price?: number;
+    quantity?: number;
+    size?: string;
+    color?: {
+      name?: string;
+    };
+  }>;
+
+  status?: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
+};
+
 export type Product = {
   _id: string;
   _type: "product";
@@ -232,7 +289,21 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Product | HeroSection | Category | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Slug;
+export type AllSanitySchemaTypes =
+  | SanityImagePaletteSwatch
+  | SanityImagePalette
+  | SanityImageDimensions
+  | SanityFileAsset
+  | Geopoint
+  | Product
+  | HeroSection
+  | Category
+  | SanityImageCrop
+  | SanityImageHotspot
+  | SanityImageAsset
+  | SanityAssetSourceData
+  | SanityImageMetadata
+  | Slug;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/helpers/query.ts
 // Variable: HERO_QUERY
@@ -630,17 +701,128 @@ export type PRODUCT_BY_SLUGResult = {
   }>;
 } | null;
 
+// Variable: MY_ORDERS_QUERY
+// Query: *[_type == "order" && clerkUserId == $userId] | order(orderData desc){  ...,products[] {  ...,product->  }  }
+export type MY_ORDERS_QUERYResult = Array<{
+  _id: string;
+  _type: "order";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+
+  transactionId?: string;
+  transactionRef?: string;
+  resourceId?: string;
+  partnerTransactionId?: string;
+  clerkUserId?: string;
+
+  paymentStatus?: "pending" | "completed" | "failed";
+  paymentMethod?: string;
+  amount?: number;
+  currency?: string;
+
+  customer?: {
+    name?: string;
+    email?: string;
+    address?: string;
+  };
+
+  payerName?: string;
+  payerAccountId?: string;
+  payerUserId?: string;
+  payerNote?: string;
+  transactionTime?: string;
+  createdAt?: string;
+
+  merchantAccountId?: string;
+  merchantFee?: number;
+  netAmountReceived?: number;
+  receivingEntity?: string;
+
+  items?: Array<{
+    _key: string;
+    name?: string;
+    variantId?: string;
+    price?: number;
+    quantity?: number;
+    size?: string;
+    color?: {
+      name?: string;
+    };
+    productImage?: {
+      _type: "image";
+      asset: {
+        _ref: string;
+        _type: "reference";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+    };
+    product?: {
+      _id: string;
+      _type: "product";
+      _createdAt: string;
+      _updatedAt: string;
+      _rev: string;
+      name?: string;
+      slug?: Slug;
+      description?: string;
+      price?: number;
+      images?: Array<{
+        _type: "image";
+        asset: {
+          _ref: string;
+          _type: "reference";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+      }>;
+      variants?: Array<{
+        variantId: string;
+        size: string;
+        color: {
+          name: string;
+          value: string;
+        };
+        stock: number;
+        price: number;
+      }>;
+      category?: {
+        _ref: string;
+        _type: "reference";
+      };
+      featured?: boolean;
+      bestSeller?: boolean;
+      newArrival?: boolean;
+      rating?: number;
+      reviews?: Array<{
+        user: {
+          name: string;
+        };
+        rating: number;
+        comment?: string;
+        date: string;
+      }>;
+    } | null;
+  }>;
+
+  totalPrice?: number;
+  amountDiscount?: number;
+  status?: "cancelled" | "delivered" | "paid" | "pending" | "shipped";
+  orderDate?: string;
+}>;
+
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "*[_type == \"heroSection\"] | order(name asc)": HERO_QUERYResult;
-    "*[_type == \"category\"] | order(name asc)": CATEGORY_QUERYResult;
-    "*[_type == \"product\"] | order(_createdAt desc)": PRODUCT_QUERYResult;
-    "*[_type == \"product\" && category->slug.current == \"short-sleeve\"] | order(_createdAt desc)": SHORT_SLEEVE_QUERYResult;
-    "*[_type == \"product\" && category->slug.current == \"long-sleeve\"] | order(_createdAt desc)": LONG_SLEEVE_QUERYResult;
-    "*[_type == \"product\" && category->slug.current == \"party\"] | order(_createdAt desc)": PARTY_QUERYResult;
-    "*[_type == \"product\" && category->slug.current == \"traditional\"] | order(_createdAt desc)": TRADITIONAL_QUERYResult;
-    "*[_type == \"product\" && slug.current == $slug] | order(name asc)[0]": PRODUCT_BY_SLUGResult;
+    '*[_type == "heroSection"] | order(name asc)': HERO_QUERYResult;
+    '*[_type == "category"] | order(name asc)': CATEGORY_QUERYResult;
+    '*[_type == "product"] | order(_createdAt desc)': PRODUCT_QUERYResult;
+    '*[_type == "product" && category->slug.current == "short-sleeve"] | order(_createdAt desc)': SHORT_SLEEVE_QUERYResult;
+    '*[_type == "product" && category->slug.current == "long-sleeve"] | order(_createdAt desc)': LONG_SLEEVE_QUERYResult;
+    '*[_type == "product" && category->slug.current == "party"] | order(_createdAt desc)': PARTY_QUERYResult;
+    '*[_type == "product" && category->slug.current == "traditional"] | order(_createdAt desc)': TRADITIONAL_QUERYResult;
+    '*[_type == "product" && slug.current == $slug] | order(name asc)[0]': PRODUCT_BY_SLUGResult;
   }
 }

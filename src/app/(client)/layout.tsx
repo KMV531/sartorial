@@ -5,6 +5,10 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "sonner";
+import { draftMode } from "next/headers";
+import DisableDraftMode from "@/components/DisableDraftMode";
+import { VisualEditing } from "next-sanity";
+import { SanityLive } from "@/sanity/lib/live";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -58,7 +62,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -73,10 +77,17 @@ export default function RootLayout({
         <body
           className={`${poppins.className} antialiased bg-white text-black`}
         >
+          {(await draftMode()).isEnabled && (
+            <>
+              <DisableDraftMode />
+              <VisualEditing />
+            </>
+          )}
           <Header />
           {children}
           <Toaster position="bottom-right" richColors />
           <Footer />
+          <SanityLive />
         </body>
       </html>
     </ClerkProvider>

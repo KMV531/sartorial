@@ -5,8 +5,15 @@ import React from "react";
 import { User, ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { Order } from "../../sanity.types";
 
-const UserAuthSection = () => {
+type UserAuthSectionProps = {
+  orders: Order[]; // adapte si tu as un type précis
+};
+
+const UserAuthSection = ({ orders }: UserAuthSectionProps) => {
+  const orderCount = orders?.length ?? 0;
+
   return (
     <ClerkLoaded>
       {/* Signed in user UI */}
@@ -19,7 +26,7 @@ const UserAuthSection = () => {
           >
             <ShoppingBasket size={20} />
             <span className="absolute -top-1 -right-1 bg-brand-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              {0}
+              {orderCount}
             </span>
           </Button>
         </Link>

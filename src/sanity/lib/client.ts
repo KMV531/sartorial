@@ -7,6 +7,12 @@ export const client = createClient({
   dataset,
   apiVersion,
   useCdn: true, // Set to false if statically generating pages, using ISR or tag-based revalidation
+  stega: {
+    studioUrl:
+      process.env.NODE_ENV === "production"
+        ? "https://sartorial-alpha.vercel.app"
+        : `${process.env.NEXT_PUBLIC_URL}/dashboard`,
+  },
 });
 
 export const writeClient = createClient({
