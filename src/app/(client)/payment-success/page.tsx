@@ -4,9 +4,11 @@ import { useCartStore } from "@/store/cartStore";
 import { Check, Home, Package, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 
-const SuccessPage = () => {
+export const dynamic = "force-dynamic"; // disable static prerendering
+
+function PageContent() {
   const searchParams = useSearchParams();
   const resourceId = searchParams.get("resourceId");
   const clearCart = useCartStore((state) => state.clearCart);
@@ -71,6 +73,14 @@ const SuccessPage = () => {
         </div>
       </div>
     </div>
+  );
+}
+
+const SuccessPage = () => {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
+      <PageContent />
+    </Suspense>
   );
 };
 
