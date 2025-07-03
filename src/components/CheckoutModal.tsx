@@ -44,6 +44,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
   const { getTotalPrice } = useCartStore();
   const [isLoading, setIsLoading] = useState(false);
   const { user, isSignedIn } = useUser();
+  const clerkUserId = user?.id;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -93,18 +94,13 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ open, onClose }) => {
           ),
           discountAmount: 0,
           paymentMethod: "mobile", // Hardcoded or your default here
+          clerkUserId, // 👈 Add this line
         }),
       });
 
       const data = await response.json();
-      if (data.paymentUrl && data.requestId) {
-        // Append resourceId to the payment URL so your success page can read it
-        const separator = data.paymentUrl.includes("?") ? "&" : "?";
-        window.location.href = `${data.paymentUrl}${separator}resourceId=${data.requestId}`;
-      } else {
-        toast.error(
-          "Payment initialization failed: Missing payment URL or requestId"
-        );
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
       }
     } catch (error) {
       console.error("Checkout error:", error);

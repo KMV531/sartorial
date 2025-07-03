@@ -10,14 +10,14 @@ export const dynamic = "force-dynamic"; // disable static prerendering
 
 function PageContent() {
   const searchParams = useSearchParams();
-  const resourceId = searchParams.get("resourceId");
+  const requestId = searchParams.get("requestId");
   const clearCart = useCartStore((state) => state.clearCart);
 
   useEffect(() => {
-    if (resourceId) {
+    if (requestId) {
       clearCart();
     }
-  }, [resourceId, clearCart]);
+  }, [requestId, clearCart]);
 
   return (
     <div className="py-10 md:py-20 bg-gradient-to-br from-green-50 to-gray-100 flex items-center justify-center p-4">
@@ -35,8 +35,8 @@ function PageContent() {
             be sent to your inbox shortly.
           </p>
           <p>
-            Resource ID:{" "}
-            <span className="text-black font-semibold">{resourceId}</span>
+            Order Number:{" "}
+            <span className="text-black font-semibold">{requestId}</span>
           </p>
         </div>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">

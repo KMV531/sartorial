@@ -29,6 +29,7 @@ type RequestBody = {
   discountAmount?: number;
   paymentMethod?: "mobile" | "bank" | "card";
   bankDetails?: { accountNumber?: string; bankCode?: string };
+  clerkUserId?: string; // 👈 Add this
 };
 
 export async function POST(request: Request) {
@@ -108,6 +109,7 @@ export async function POST(request: Request) {
       amount: body.totalAmount,
       currency: "XAF",
       paymentMethod: body.paymentMethod || "unknown",
+      clerkUserId: body.clerkUserId || "", // 👈 Store it here
       customer: {
         name: body.customer?.name || "",
         email: body.customer?.email || "",

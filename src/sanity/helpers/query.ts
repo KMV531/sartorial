@@ -46,3 +46,11 @@ export const SIMILAR_PRODUCTS_QUERY =
       slug
     }
   }`);
+
+export const MY_ORDERS_QUERY = defineQuery(
+  `*[_type == "order" && clerkUserId == $userId] | order(orderData desc){
+  ...,products[] {
+  ...,product->
+  }
+  }`
+);

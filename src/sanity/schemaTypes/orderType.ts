@@ -28,6 +28,11 @@ export const orderType = defineType({
       type: "string",
     }),
     defineField({
+      name: "clerkUserId",
+      title: "Clerk User ID",
+      type: "string",
+    }),
+    defineField({
       name: "paymentStatus",
       title: "Payment Status",
       type: "string",
@@ -208,12 +213,12 @@ export const orderType = defineType({
   preview: {
     select: {
       title: "transactionRef",
-      subtitle: "transactionId",
+      subtitle: "clerkUserId",
     },
     prepare(selection) {
       return {
         title: selection.title,
-        subtitle: selection.subtitle,
+        subtitle: `User ID: ${selection.subtitle}`,
       };
     },
   },
