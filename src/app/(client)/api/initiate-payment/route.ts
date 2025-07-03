@@ -122,7 +122,9 @@ export async function POST(request: Request) {
         price: item.price,
         quantity: item.quantity,
         size: item.selectedSize || "",
-        color: item.selectedColor?.name || "",
+        color: item.selectedColor
+          ? { name: item.selectedColor.name } // only send {name: "White"}, drop `value`
+          : null,
         productImage: item.productImage?.asset?._ref
           ? {
               _type: "image",

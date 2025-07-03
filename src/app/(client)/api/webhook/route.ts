@@ -1,20 +1,6 @@
 import { writeClient } from "@/sanity/lib/client";
 import { NextResponse } from "next/server";
 
-type CartItem = {
-  productId: string;
-  quantity: number;
-  price: number;
-  size?: string;
-  color?: {
-    name?: string;
-  };
-  selectedSize?: string;
-  selectedColor?: {
-    name?: string;
-  };
-};
-
 type WebhookPayload = {
   eventType: string;
   resource: {
@@ -50,13 +36,6 @@ type WebhookPayload = {
       fee?: number;
       netAmountReceived?: number;
     };
-  };
-  cartItems?: CartItem[];
-  customer?: {
-    name?: string;
-    email?: string;
-    phone?: string;
-    address?: string;
   };
 };
 
