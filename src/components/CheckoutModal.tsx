@@ -35,6 +35,7 @@ function prepareCartPayload() {
       quantity: item.quantity,
       selectedSize: item.selectedSize,
       selectedColor: item.selectedColor,
+      productImage: item.product.images?.[0] || null, // first image or null
     };
   });
 }

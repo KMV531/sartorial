@@ -9,7 +9,8 @@ type CartItem = {
   price: number;
   quantity: number;
   selectedSize?: string;
-  selectedColor?: { name?: string; value?: string } | null;
+  selectedColor?: { name?: string } | null;
+  productImage?: { asset?: { _ref?: string } }; // assuming you attach this
 };
 
 type Customer = {
@@ -116,13 +117,21 @@ export async function POST(request: Request) {
       },
       items: body.cartItems.map((item) => ({
         _key: `${item.productId}-${item.variantId}`,
-        product: { _type: "reference", _ref: item.productId },
         name: item.name,
         variantId: item.variantId,
         price: item.price,
         quantity: item.quantity,
         size: item.selectedSize || "",
-        color: item.selectedColor?.name ? item.selectedColor : null,
+        color: item.selectedColor?.name || "",
+        productImage: item.productImage?.asset?._ref
+          ? {
+              _type: "image",
+              asset: {
+                _type: "reference",
+                _ref: item.productImage.asset._ref,
+              },
+            }
+          : null,
       })),
       payerNote: `Commande Sartorial - ${body.customerName || "Client inconnu"}`,
       createdAt: new Date().toISOString(),

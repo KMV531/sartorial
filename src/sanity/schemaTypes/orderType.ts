@@ -132,10 +132,12 @@ export const orderType = defineType({
           type: "object",
           fields: [
             defineField({
-              name: "product",
-              title: "Product Bought",
-              type: "reference",
-              to: [{ type: "product" }],
+              name: "productImage",
+              title: "Product Image",
+              type: "image",
+              options: {
+                hotspot: true,
+              },
             }),
             defineField({
               name: "name",
