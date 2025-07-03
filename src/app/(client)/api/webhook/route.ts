@@ -81,6 +81,7 @@ export async function POST(request: Request) {
           transactionId: payload.resource.transactionId,
           partnerTransactionId: payload.resource.partnerTransactionId,
           paymentStatus: "completed",
+          status: "paid", // update the new status accordingly
           paymentMethod: payload.resource.payer?.paymentMethod,
           amount: payload.resource.amount,
           currency: payload.resource.currencyCode,

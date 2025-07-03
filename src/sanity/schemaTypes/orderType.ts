@@ -18,6 +18,11 @@ export const orderType = defineType({
       type: "string",
     }),
     defineField({
+      name: "resourceId",
+      title: "Resource ID",
+      type: "string",
+    }),
+    defineField({
       name: "partnerTransactionId",
       title: "Partner Transaction ID",
       type: "string",
@@ -63,11 +68,6 @@ export const orderType = defineType({
         defineField({
           name: "address",
           title: "Delivery Address",
-          type: "string",
-        }),
-        defineField({
-          name: "phone",
-          title: "Phone",
           type: "string",
         }),
         // Add other custom fields as needed
@@ -173,6 +173,36 @@ export const orderType = defineType({
           ],
         },
       ],
+    }),
+    defineField({
+      name: "status",
+      title: "Order Status",
+      type: "string",
+      options: {
+        list: [
+          {
+            title: "Pending",
+            value: "pending",
+          },
+          {
+            title: "Paid",
+            value: "paid",
+          },
+          {
+            title: "Shipped",
+            value: "shipped",
+          },
+          {
+            title: "Delivered",
+            value: "delivered",
+          },
+          {
+            title: "Cancelled",
+            value: "cancelled",
+          },
+        ],
+      },
+      initialValue: "pending", // optional: sets default to 'pending' on order creation
     }),
   ],
   preview: {
