@@ -59,7 +59,7 @@
 
 - **Custom CMS integrations**
 
-📞 **Contact**: koladjamomo@gmail.com <br /> <br />
+📩 **Contact**: koladjamomo@gmail.com <br /> <br />
 🔗 **Portfolio**: [kmvdev.vercel.app](http://kmvdev.vercel.app/)
 
 **Deployed on Vercel**: http://sartorial-alpha.vercel.app
