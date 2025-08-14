@@ -68,7 +68,7 @@
 
 1. Clone repository:
    ```bash
-   git clone https://github.com/KMV531/flow.git
+   git clone https://github.com/KMV531/sartorial.git
    
 2. Install dependencies:
    ```bash
