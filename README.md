@@ -96,3 +96,9 @@
 4. Run development server:
    ```bash
    npm run dev
+
+5. If you get:
+   ```bash
+   error when starting dev server:
+   Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Please download and install Microsoft redistributable package from here https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170, then stop and run your server
